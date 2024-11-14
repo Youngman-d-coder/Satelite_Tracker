@@ -104,8 +104,7 @@ Showing the loading spinner while fetching data.
 -- **Automatic Updates**: The location is updated every 5 minutes using the setInterval() function.
 -- **Manual Refresh: Users can click the Refresh button to fetch and display the ISS's current location manually.
 -- **Coordinates Display**: The coordinates and a timestamp of the last update are displayed beside the map.
--- **Error Handling**: If there is an issue with fetching the data, an error message is logged to the console.
-
+-- **Error Handling\*\*: If there is an issue with fetching the data, an error message is logged to the console.
 
 ## ⚙️ Challenges and Solutions
 
@@ -121,4 +120,4 @@ This project is open-source and available under the MIT License.
 For further questions or issues with the project, feel free to reach out to the project maintainer:
 
 Email: sayhitonelson@gmail.com
-GitHub: Youngman-d-coder
+GitHub: github.com/Youngman-d-coder
