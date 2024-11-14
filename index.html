@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Satelite Tracker</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles/style.css" />
+  </head>
+  <body>
+    <h1>Satellite Tracker</h1>
+    <div id="tracker-container">
+      <div class="map-cont">
+        <!-- Map Display -->
+        <div id="map"></div>
+      </div>
+
+      <div class="coordinates-cont">
+        <!-- Coordinates Display -->
+        <div id="coordinates">
+          <p>Latitude: <span id="latitude">-</span></p>
+          <p>Longitude: <span id="longitude">-</span></p>
+          <p>Last Updated: <span id="timestamp">-</span></p>
+        </div>
+
+        <!-- Refresh Button for manual update -->
+        <button id="refreshButton">Refresh ISS Location</button>
+        <!-- Loading Spinner -->
+        <div id="loading-spinner" style="display: none">Loading...</div>
+      </div>
+    </div>
+
+    <!-- Leaflet JS Library -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Axios Library for API Requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Link to JavaScript file -->
+    <script src="scripts/script.js"></script>
+  </body>
+</html>
