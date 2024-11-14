@@ -1,8 +1,15 @@
+const satelliteIcon = L.icon({
+  iconUrl: "../assets/satellite_icon.png", // Path to the icon in the assets folder
+  iconSize: [40, 40], // Size of the icon
+  iconAnchor: [16, 16], // Anchor point of the icon (centered)
+  popupAnchor: [0, -16], // Popup position
+});
+
 // Initialize the map
 const map = L.map("map").setView([0, 0], 2); // Set the initial view to [0, 0] (Equator) with a world-level zoom of 2
 
-// Marker for ISS location
-const issMarker = L.marker([0, 0]).addTo(map); // Start marker at [0, 0] and update it later
+// Create the ISS marker with the satellite icon
+const issMarker = L.marker([0, 0], { icon: satelliteIcon }).addTo(map);
 
 // Add a tile layer (OpenStreetMap tiles)
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -13,14 +20,18 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 
 // Function to format the timestamp
 function formatTimestamp(date) {
-  return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 }
 
 const loadingSpinner = document.getElementById("loading-spinner");
 
 // Function to update the ISS marker's position
 async function updateISSLocation() {
-    loadingSpinner.style.display = "block";
+  loadingSpinner.style.display = "block";
   try {
     const response = await axios.get("http://api.open-notify.org/iss-now.json");
     const { latitude, longitude } = response.data.iss_position;
@@ -36,7 +47,6 @@ async function updateISSLocation() {
     // Update timestamp
     const timestamp = formatTimestamp(new Date());
     document.getElementById("timestamp").textContent = timestamp;
-    
   } catch (error) {
     console.error("Error fetching ISS location:", error);
   } finally {
@@ -45,13 +55,12 @@ async function updateISSLocation() {
 }
 
 // Select the refresh button
-const refreshButton = document.getElementById('refreshButton');
+const refreshButton = document.getElementById("refreshButton");
 
 // Add click event listener to refresh button
-refreshButton.addEventListener('click', () => {
+refreshButton.addEventListener("click", () => {
   updateISSLocation(); // Call the function to update the ISS location
 });
-
 
 // Call the update function every 5 seconds
 setInterval(updateISSLocation, 510000);
