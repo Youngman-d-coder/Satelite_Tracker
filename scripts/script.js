@@ -73,13 +73,6 @@ function showNotification(message, type = "error") {
   notificationDiv.className = `notification-message ${type}`;
   notificationDiv.textContent = message;
 
-  const backgroundColor =
-    type === "error"
-      ? "linear-gradient(135deg, #ff0844 0%, #ff4081 100%)"
-      : "linear-gradient(135deg, #00ff88 0%, #00cc88 100%)";
-  const textColor = type === "error" ? "white" : "#0a0e27";
-  notificationDiv.style.cssText = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: ${backgroundColor}; color: ${textColor}; padding: 15px 30px; border-radius: 10px; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 30px ${type === "error" ? "rgba(255, 8, 68, 0.5)" : "rgba(0, 255, 136, 0.5)"}; font-weight: 600; font-size: 1em;`;
-
   document.body.appendChild(notificationDiv);
 
   // Auto-remove notification after 5 seconds
@@ -98,20 +91,20 @@ async function updateISSLocation() {
     });
     const { latitude, longitude, timestamp } = response.data; // Extract latitude, longitude, and timestamp
 
+    // Parse and format coordinates once
+    const lat = parseFloat(latitude).toFixed(4);
+    const lng = parseFloat(longitude).toFixed(4);
+
     // Update the marker position on the map
     issMarker.setLatLng([latitude, longitude]);
-    issMarker.bindPopup(
-      `Lat: ${parseFloat(latitude).toFixed(4)}, Lng: ${parseFloat(longitude).toFixed(4)}`
-    );
+    issMarker.bindPopup(`Lat: ${lat}, Lng: ${lng}`);
 
     // Center the map view on the updated ISS location
     map.setView([latitude, longitude], CONFIG.DEFAULT_ZOOM);
 
     // Update the displayed latitude and longitude values on the webpage
-    document.getElementById("latitude").textContent =
-      parseFloat(latitude).toFixed(4);
-    document.getElementById("longitude").textContent =
-      parseFloat(longitude).toFixed(4);
+    document.getElementById("latitude").textContent = lat;
+    document.getElementById("longitude").textContent = lng;
 
     // Format the timestamp and update it on the webpage
     const formattedTimestamp = formatTimestampFromAPI(timestamp);

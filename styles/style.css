@@ -287,8 +287,17 @@ h1 {
 
 /* Notification styling for dark theme */
 .notification-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px 30px;
+  border-radius: 10px;
+  z-index: 1000;
   font-weight: 600;
+  font-size: 1em;
   animation: slideIn 0.5s ease-out;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes slideIn {
@@ -303,14 +312,19 @@ h1 {
 }
 
 .notification-message.error {
-  background: linear-gradient(135deg, #ff0844 0%, #ff4081 100%) !important;
-  box-shadow: 0 0 20px rgba(255, 8, 68, 0.5);
+  background: linear-gradient(135deg, #ff0844 0%, #ff4081 100%);
+  color: white;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(255, 8, 68, 0.5);
 }
 
 .notification-message.success {
-  background: linear-gradient(135deg, #00ff88 0%, #00cc88 100%) !important;
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
-  color: #0a0e27 !important;
+  background: linear-gradient(135deg, #00ff88 0%, #00cc88 100%);
+  color: #0a0e27;
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(0, 255, 136, 0.5);
 }
 
 @media (max-width: 768px) {
