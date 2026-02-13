@@ -30,7 +30,7 @@ const issMarker = L.marker([0, 0], { icon: satelliteIcon }).addTo(map);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: CONFIG.MAX_ZOOM, // Maximum zoom level allowed
   attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', // Acknowledgement for the map data source
+    "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors", // Acknowledgement for the map data source
 }).addTo(map);
 
 // Helper function to format UNIX timestamps into a human-readable date and time
@@ -49,7 +49,10 @@ function formatTimestampFromAPI(apiTimestamp) {
 
 // Alert the user if their internet connection is offline on page load
 if (!navigator.onLine) {
-  showError("You are offline. The map and data may not update.");
+  showNotification(
+    "You are offline. The map and data may not update.",
+    "error"
+  );
 }
 
 // Reference to the loading spinner element for indicating active data fetching
@@ -64,19 +67,20 @@ function debounce(func, delay) {
   };
 }
 
-// Function to display user-friendly error messages
-function showError(message) {
-  const errorDiv = document.createElement("div");
-  errorDiv.className = "error-message";
-  errorDiv.textContent = message;
-  errorDiv.style.cssText =
-    "position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #f44336; color: white; padding: 15px 30px; border-radius: 5px; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.3);";
+// Function to display user-friendly notifications
+function showNotification(message, type = "error") {
+  const notificationDiv = document.createElement("div");
+  notificationDiv.className = `notification-message ${type}`;
+  notificationDiv.textContent = message;
 
-  document.body.appendChild(errorDiv);
+  const backgroundColor = type === "error" ? "#f44336" : "#4caf50";
+  notificationDiv.style.cssText = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: ${backgroundColor}; color: white; padding: 15px 30px; border-radius: 5px; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.3);`;
 
-  // Auto-remove error message after 5 seconds
+  document.body.appendChild(notificationDiv);
+
+  // Auto-remove notification after 5 seconds
   setTimeout(() => {
-    errorDiv.remove();
+    notificationDiv.remove();
   }, 5000);
 }
 
@@ -110,13 +114,25 @@ async function updateISSLocation() {
 
     // Provide specific error messages based on error type
     if (error.code === "ECONNABORTED") {
-      showError("Request timed out. Please check your internet connection.");
+      showNotification(
+        "Request timed out. Please check your internet connection.",
+        "error"
+      );
     } else if (error.response) {
-      showError(`API Error: ${error.response.status}. Please try again later.`);
+      showNotification(
+        `API Error: ${error.response.status}. Please try again later.`,
+        "error"
+      );
     } else if (error.request) {
-      showError("No response from server. Please check your connection.");
+      showNotification(
+        "No response from server. Please check your connection.",
+        "error"
+      );
     } else {
-      showError("Failed to fetch ISS location. Please try again later.");
+      showNotification(
+        "Failed to fetch ISS location. Please try again later.",
+        "error"
+      );
     }
   } finally {
     loadingSpinner.style.display = "none"; // Hide the loading spinner once data fetching is complete
@@ -134,12 +150,15 @@ refreshButton.addEventListener("click", () => {
 
 // Monitor online/offline status changes
 window.addEventListener("online", () => {
-  showError("Connection restored. Updating ISS location...");
+  showNotification("Connection restored. Updating ISS location...", "success");
   updateISSLocation();
 });
 
 window.addEventListener("offline", () => {
-  showError("You are offline. The map and data will not update.");
+  showNotification(
+    "You are offline. The map and data will not update.",
+    "error"
+  );
 });
 
 // Set up an interval to automatically refresh the ISS location
