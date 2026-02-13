@@ -1,6 +1,6 @@
 # 🚀 International Space Station (ISS) Tracker
 
-A modern, responsive web application that displays the **real-time location of the International Space Station (ISS)** on an interactive world map. The app automatically updates every 5 minutes and features manual refresh capabilities, offline detection, and accessible design. Built with **Leaflet.js** for map rendering and **Axios** for secure HTTPS API calls.
+A modern, responsive web application that displays the **real-time location of the International Space Station (ISS)** on an interactive world map with a stunning **dark theme and neon effects**. The app automatically updates every 5 minutes and features manual refresh capabilities, offline detection, and accessible design. Built with **Leaflet.js** for map rendering and **Axios** for secure HTTPS API calls.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -13,7 +13,9 @@ A modern, responsive web application that displays the **real-time location of t
 - 📡 **Offline Detection**: Automatic monitoring of network connectivity
 - ♿ **Accessible Design**: ARIA labels and semantic HTML for screen readers
 - 📱 **Responsive Layout**: Works seamlessly on desktop and mobile devices
-- 🎨 **User-Friendly UI**: Clean interface with loading indicators and error messages
+- 🎨 **Dark Theme with Neon Effects**: Stunning visual design with glowing elements and animated backgrounds
+- 🌟 **Animated Star Field**: Dynamic background with twinkling stars
+- 💫 **Smooth Animations**: Hover effects, transitions, and pulsing neon glow
 - 🔒 **Secure**: HTTPS API endpoints for safe data transmission
 - ⚡ **Performance Optimized**: Request timeouts and debouncing to prevent excessive API calls
 
@@ -22,11 +24,12 @@ A modern, responsive web application that displays the **real-time location of t
 ## 🛠️ Technologies Used
 
 - **HTML5**: Semantic markup with accessibility features
-- **CSS3**: Modern, responsive styling with Flexbox
+- **CSS3**: Modern, responsive styling with Flexbox, gradients, and animations
 - **JavaScript (ES6+)**: Async/await, modern syntax
-- **Leaflet.js v1.9.4**: Interactive map rendering
+- **Leaflet.js v1.9.4**: Interactive map rendering with dark theme tiles
 - **Axios**: HTTP client for API requests
-- **Open Notify API**: ISS location data provider
+- **Where the ISS At API**: Reliable ISS location data provider
+- **CARTO Dark Theme**: Dark map tiles for enhanced visual experience
 - **ESLint & Prettier**: Code quality and formatting tools
 
 ---
@@ -125,15 +128,16 @@ start index.html
 ### Architecture Overview
 
 1. **Initialization**
-   - Map is initialized using Leaflet.js centered at [0, 0]
+   - Map is initialized using Leaflet.js centered at [0, 0] with dark theme tiles
    - ISS marker is placed with custom satellite icon
    - Initial API call fetches current ISS position
 
 2. **Data Fetching**
-   - API Endpoint: `https://api.open-notify.org/iss-now.json` (secure HTTPS)
-   - Response Format: JSON with `iss_position` (latitude, longitude) and `timestamp`
+   - API Endpoint: `https://api.wheretheiss.at/v1/satellites/25544` (secure HTTPS)
+   - Response Format: JSON with `latitude`, `longitude`, and `timestamp`
    - Timeout: 10 seconds to prevent hanging requests
    - Error Handling: Specific error messages for different failure types
+   - Coordinates formatted to 4 decimal places for precision
 
 3. **Automatic Updates**
    - Background refresh every 5 minutes using `setInterval()`
@@ -143,27 +147,29 @@ start index.html
 4. **Manual Refresh**
    - Refresh button with 1-second debouncing to prevent spam
    - Immediate API call on button click
-   - Loading spinner provides visual feedback
+   - Loading spinner provides visual feedback with neon glow
 
 5. **Offline Detection**
    - Monitors `navigator.onLine` status
    - Listens for `online` and `offline` events
-   - Displays user-friendly notifications
+   - Displays user-friendly notifications with gradient backgrounds
 
 6. **Map Updates**
    - Marker position updated to new coordinates
    - Map view centered on ISS location
-   - Popup shows latitude and longitude (can be clicked)
+   - Popup shows latitude and longitude with 4 decimal precision
 
 ---
 
 ## 🎨 User Interface
 
-- **Map Container**: Interactive Leaflet map with OpenStreetMap tiles
-- **Coordinates Panel**: Displays current latitude, longitude, and last update time
-- **Refresh Button**: Manually triggers ISS location update
-- **Loading Spinner**: Animated indicator during API requests
-- **Error Messages**: Non-intrusive, auto-dismissing error notifications
+- **Dark Theme**: Navy/purple gradient background with animated star field
+- **Neon Effects**: Cyan glowing borders, text shadows, and button effects with pulsing animations
+- **Map Container**: Interactive Leaflet map with CARTO dark theme tiles and neon border glow
+- **Coordinates Panel**: Dark semi-transparent panel with cyan accents and hover effects
+- **Refresh Button**: Gradient cyan button with ripple effect and neon glow on hover
+- **Loading Spinner**: Animated spinner with neon cyan glow effect
+- **Notifications**: Gradient background notifications with glow effects (error in red, success in green)
 
 ---
 
@@ -259,9 +265,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [Open Notify API](http://open-notify.org/) - ISS location data
+- [Where the ISS At API](https://wheretheiss.at/) - Reliable ISS location data
 - [Leaflet.js](https://leafletjs.com/) - Interactive map library
-- [OpenStreetMap](https://www.openstreetmap.org/) - Map tiles and data
+- [CARTO](https://carto.com/) - Dark theme map tiles
+- [OpenStreetMap](https://www.openstreetmap.org/) - Map data
 - [Axios](https://axios-http.com/) - Promise-based HTTP client
 
 ---
