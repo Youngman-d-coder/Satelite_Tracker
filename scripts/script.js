@@ -27,14 +27,11 @@ const map = L.map("map").setView([0, 0], CONFIG.DEFAULT_ZOOM); // The map starts
 const issMarker = L.marker([0, 0], { icon: satelliteIcon }).addTo(map);
 
 // Add the base map layer (Dark theme map tiles) with proper attribution
-L.tileLayer(
-  "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-  {
-    maxZoom: CONFIG.MAX_ZOOM, // Maximum zoom level allowed
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>', // Acknowledgement for the map data source
-  }
-).addTo(map);
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+  maxZoom: CONFIG.MAX_ZOOM, // Maximum zoom level allowed
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>', // Acknowledgement for the map data source
+}).addTo(map);
 
 // Helper function to format UNIX timestamps into a human-readable date and time
 function formatTimestampFromAPI(apiTimestamp) {
