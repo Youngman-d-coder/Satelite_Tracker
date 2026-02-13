@@ -2,6 +2,16 @@
 // Developed by Nelson, Chimdiadi C.
 // This script updates a map with the live location of the International Space Station (ISS) using the Open Notify API.
 
+// Configuration constants
+const CONFIG = {
+  API_URL: "https://api.open-notify.org/iss-now.json",
+  UPDATE_INTERVAL: 5 * 60 * 1000, // 5 minutes in milliseconds
+  API_TIMEOUT: 10000, // 10 seconds timeout for API requests
+  DEFAULT_ZOOM: 2,
+  MAX_ZOOM: 18,
+  DEBOUNCE_DELAY: 1000, // 1 second debounce for manual refresh
+};
+
 // Create a custom satellite icon for the map
 const satelliteIcon = L.icon({
   iconUrl: "assets/satellite_icon.png", // Path to the satellite icon image in the assets folder
@@ -11,16 +21,16 @@ const satelliteIcon = L.icon({
 });
 
 // Initialize the Leaflet map and set its initial view
-const map = L.map("map").setView([0, 0], 2); // The map starts centered at latitude 0, longitude 0, with a zoom level showing the whole world
+const map = L.map("map").setView([0, 0], CONFIG.DEFAULT_ZOOM); // The map starts centered at latitude 0, longitude 0, with a zoom level showing the whole world
 
 // Add a marker to represent the ISS's location on the map
 const issMarker = L.marker([0, 0], { icon: satelliteIcon }).addTo(map);
 
 // Add the base map layer (OpenStreetMap tiles) with proper attribution
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 18, // Maximum zoom level allowed
+  maxZoom: CONFIG.MAX_ZOOM, // Maximum zoom level allowed
   attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', // Acknowledgement for the map data source
+    "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors", // Acknowledgement for the map data source
 }).addTo(map);
 
 // Helper function to format UNIX timestamps into a human-readable date and time
@@ -37,29 +47,56 @@ function formatTimestampFromAPI(apiTimestamp) {
   });
 }
 
-// Alert the user if their internet connection is offline
+// Alert the user if their internet connection is offline on page load
 if (!navigator.onLine) {
-  alert("You are offline. The map and data may not update."); // Displays a warning to ensure the user understands connectivity limitations
+  showError("You are offline. The map and data may not update.");
 }
 
 // Reference to the loading spinner element for indicating active data fetching
 const loadingSpinner = document.getElementById("loading-spinner");
 
+// Debounce function to prevent rapid successive API calls
+let debounceTimer;
+function debounce(func, delay) {
+  return function (...args) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+// Function to display user-friendly error messages
+function showError(message) {
+  const errorDiv = document.createElement("div");
+  errorDiv.className = "error-message";
+  errorDiv.textContent = message;
+  errorDiv.style.cssText =
+    "position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: #f44336; color: white; padding: 15px 30px; border-radius: 5px; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.3);";
+
+  document.body.appendChild(errorDiv);
+
+  // Auto-remove error message after 5 seconds
+  setTimeout(() => {
+    errorDiv.remove();
+  }, 5000);
+}
+
 // Function to fetch and update the ISS's location on the map
 async function updateISSLocation() {
   loadingSpinner.style.display = "block"; // Show the loading spinner while data is being fetched
   try {
-    // Fetch the current ISS location and timestamp from the Open Notify API
-    const response = await axios.get("https://api.open-notify.org/iss-now.json");
+    // Fetch the current ISS location and timestamp from the Open Notify API with timeout
+    const response = await axios.get(CONFIG.API_URL, {
+      timeout: CONFIG.API_TIMEOUT,
+    });
     const { latitude, longitude } = response.data.iss_position; // Extract latitude and longitude
     const apiTimestamp = response.data.timestamp; // Extract the timestamp
 
-    // Update the marker position on the map and bind a popup with location data
+    // Update the marker position on the map
     issMarker.setLatLng([latitude, longitude]);
-    issMarker.bindPopup(`lat : ${latitude}, lng : ${longitude}`).openPopup();
+    issMarker.bindPopup(`Lat: ${latitude}, Lng: ${longitude}`);
 
     // Center the map view on the updated ISS location
-    map.setView([latitude, longitude], 2);
+    map.setView([latitude, longitude], CONFIG.DEFAULT_ZOOM);
 
     // Update the displayed latitude and longitude values on the webpage
     document.getElementById("latitude").textContent = latitude;
@@ -70,7 +107,17 @@ async function updateISSLocation() {
     document.getElementById("timestamp").textContent = formattedTimestamp;
   } catch (error) {
     console.error("Error fetching ISS location:", error); // Log the error for debugging purposes
-    alert("Failed to fetch the ISS location. Please try again later."); // Notify the user of any issues
+
+    // Provide specific error messages based on error type
+    if (error.code === "ECONNABORTED") {
+      showError("Request timed out. Please check your internet connection.");
+    } else if (error.response) {
+      showError(`API Error: ${error.response.status}. Please try again later.`);
+    } else if (error.request) {
+      showError("No response from server. Please check your connection.");
+    } else {
+      showError("Failed to fetch ISS location. Please try again later.");
+    }
   } finally {
     loadingSpinner.style.display = "none"; // Hide the loading spinner once data fetching is complete
   }
@@ -79,13 +126,24 @@ async function updateISSLocation() {
 // Reference to the refresh button on the webpage
 const refreshButton = document.getElementById("refreshButton");
 
-// Attach a click event listener to the refresh button to allow manual updates
+// Attach a click event listener to the refresh button with debouncing
+const debouncedUpdate = debounce(updateISSLocation, CONFIG.DEBOUNCE_DELAY);
 refreshButton.addEventListener("click", () => {
-  updateISSLocation(); // Fetch and display the updated ISS location
+  debouncedUpdate(); // Fetch and display the updated ISS location with debouncing
 });
 
-// Set up an interval to automatically refresh the ISS location every 8.5 minutes (510 seconds)
-setInterval(updateISSLocation, 510000);
+// Monitor online/offline status changes
+window.addEventListener("online", () => {
+  showError("Connection restored. Updating ISS location...");
+  updateISSLocation();
+});
+
+window.addEventListener("offline", () => {
+  showError("You are offline. The map and data will not update.");
+});
+
+// Set up an interval to automatically refresh the ISS location
+setInterval(updateISSLocation, CONFIG.UPDATE_INTERVAL);
 
 // Fetch and display the ISS location immediately upon page load
 updateISSLocation();

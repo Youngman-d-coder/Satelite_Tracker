@@ -13,14 +13,28 @@ body {
   background-color: #f4f4f9;
   color: #333;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
 }
 
+/* Header styling */
+header {
+  text-align: center;
+  margin: 20px 0;
+}
+
+h1 {
+  font-size: 2em;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
 /* Tracker container styling */
 #tracker-container {
-  width: 1500px;
+  max-width: 1500px;
+  width: 95%;
   padding: 20px;
   margin: auto;
   display: flex;

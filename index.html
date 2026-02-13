@@ -1,9 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Satelite Tracker</title>
+    <meta
+      name="description"
+      content="Track the International Space Station (ISS) in real-time on an interactive world map"
+    />
+    <meta
+      name="keywords"
+      content="ISS, International Space Station, satellite tracker, real-time tracking, space"
+    />
+    <title>ISS Satellite Tracker - Real-time Location</title>
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -18,27 +26,49 @@
     <link rel="stylesheet" href="styles/style.css" />
   </head>
   <body>
-    <h1>Satellite Tracker</h1>
-    <div id="tracker-container">
-      <div class="map-cont">
+    <header>
+      <h1>International Space Station Tracker</h1>
+    </header>
+    <main id="tracker-container">
+      <section class="map-cont" aria-label="ISS Location Map">
         <!-- Map Display -->
-        <div id="map"></div>
-      </div>
+        <div
+          id="map"
+          role="application"
+          aria-label="Interactive map showing ISS location"
+        ></div>
+      </section>
 
-      <div class="coordinates-cont">
+      <aside class="coordinates-cont" aria-label="ISS Coordinates and Controls">
         <!-- Coordinates Display -->
         <div id="coordinates">
-          <p>Latitude: <span id="latitude">-</span></p>
-          <p>Longitude: <span id="longitude">-</span></p>
-          <p>Last Updated: <span id="timestamp">-</span></p>
+          <p>
+            <strong>Latitude:</strong>
+            <span id="latitude" aria-live="polite">-</span>
+          </p>
+          <p>
+            <strong>Longitude:</strong>
+            <span id="longitude" aria-live="polite">-</span>
+          </p>
+          <p>
+            <strong>Last Updated:</strong>
+            <span id="timestamp" aria-live="polite">-</span>
+          </p>
         </div>
 
         <!-- Refresh Button for manual update -->
-        <button id="refreshButton">Refresh ISS Location</button>
+        <button id="refreshButton" aria-label="Manually refresh ISS location">
+          Refresh ISS Location
+        </button>
         <!-- Loading Spinner -->
-        <div id="loading-spinner" style="display: none"></div>
-      </div>
-    </div>
+        <div
+          id="loading-spinner"
+          style="display: none"
+          role="status"
+          aria-label="Loading ISS location data"
+        ></div>
+      </aside>
+    </main>
 
     <!-- Axios Library for API Requests -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
