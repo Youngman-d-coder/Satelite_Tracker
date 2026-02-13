@@ -1,123 +1,276 @@
-# 🚀 Satellite Tracker
+# 🚀 International Space Station (ISS) Tracker
 
-A simple web application that displays the **real-time location of the International Space Station (ISS)** on a world map. The app automatically updates every 5 minutes (510 seconds) and allows manual refreshing. This project uses **Leaflet.js** for map rendering and **Axios** for API calls to fetch the ISS location.
+A modern, responsive web application that displays the **real-time location of the International Space Station (ISS)** on an interactive world map. The app automatically updates every 5 minutes and features manual refresh capabilities, offline detection, and accessible design. Built with **Leaflet.js** for map rendering and **Axios** for secure HTTPS API calls.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+---
+
+## ✨ Features
+
+- 🌍 **Real-time ISS Tracking**: Live location updates every 5 minutes
+- 🔄 **Manual Refresh**: On-demand location updates with debounced refresh button
+- 📡 **Offline Detection**: Automatic monitoring of network connectivity
+- ♿ **Accessible Design**: ARIA labels and semantic HTML for screen readers
+- 📱 **Responsive Layout**: Works seamlessly on desktop and mobile devices
+- 🎨 **User-Friendly UI**: Clean interface with loading indicators and error messages
+- 🔒 **Secure**: HTTPS API endpoints for safe data transmission
+- ⚡ **Performance Optimized**: Request timeouts and debouncing to prevent excessive API calls
 
 ---
 
 ## 🛠️ Technologies Used
 
-- **HTML**: For the page structure
-- **CSS**: For styling the layout
-- **JavaScript**: For API integration and map handling
-- **Leaflet.js**: For rendering the interactive map
-- **Axios**: For making HTTP requests
+- **HTML5**: Semantic markup with accessibility features
+- **CSS3**: Modern, responsive styling with Flexbox
+- **JavaScript (ES6+)**: Async/await, modern syntax
+- **Leaflet.js v1.9.4**: Interactive map rendering
+- **Axios**: HTTP client for API requests
+- **Open Notify API**: ISS location data provider
+- **ESLint & Prettier**: Code quality and formatting tools
 
 ---
 
 ## 📂 Project Structure
 
-```bash
-/satellite-tracker
-  ├── index.html              # Main HTML file
-  ├── /styles
-  │     └── style.css         # Styles for the map and layout
-  ├── /scripts
-  │     └── script.js         # JavaScript for map functionality and API handling
-  └── README.md               # Project documentation
 ```
+satellite-tracker/
+├── index.html              # Main HTML file with semantic structure
+├── assets/
+│   └── satellite_icon.png  # Custom ISS marker icon
+├── styles/
+│   └── style.css          # Responsive styles and layout
+├── scripts/
+│   └── script.js          # JavaScript for map and API handling
+├── .eslintrc.json         # ESLint configuration
+├── .prettierrc.json       # Prettier configuration
+├── .gitignore             # Git ignore rules
+├── package.json           # Project metadata and scripts
+├── LICENSE                # MIT License
+└── README.md              # Project documentation
+```
+
+---
 
 ## ⚙️ Prerequisites
 
--- This project utilizes the following technologies:
+- **Node.js** (v14 or higher) - Required for development tools
+- **npm** - Package manager (comes with Node.js)
+- **Modern Web Browser** - Chrome, Firefox, Safari, or Edge (latest versions)
+- **Internet Connection** - Required for loading map tiles and ISS data
 
--- **HTML**: For the structure of the page
--- **CSS**: For styling the page and layout
--- **JavaScript**: For integrating with APIs and handling map functionality
--- **Leaflet.js**: For displaying the world map
--- **Axios**: For making HTTP requests to fetch the ISS location
+---
 
 ## 📦 Setup Instructions
 
--- Clone the Repository
+### Quick Start (Development)
+
+1. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/Youngman-d-coder/Satelite_Tracker.git
+   cd Satelite_Tracker
+   ```
+
+2. **Install Dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Start Development Server**
+
+   ```bash
+   npm run dev
+   ```
+
+   This will start a local HTTP server on port 8080 and automatically open the app in your default browser.
+
+4. **Access the Application**
+   - The app will open automatically at `http://localhost:8080`
+   - Or manually navigate to `http://localhost:8080` in your browser
+
+### Alternative: Direct Browser Access
+
+If you don't need development tools, you can open `index.html` directly in your browser:
 
 ```bash
-git clone https://github.com/Youngman-d-coder/Satellite_Tracker.git
-cd satellite-tracker
+# On macOS
+open index.html
+
+# On Linux
+xdg-open index.html
+
+# On Windows
+start index.html
 ```
 
--- Open the index.html file in your browser.
--- Open the Project
--- Ensure Internet Access
--- The project uses external libraries (Leaflet.js, Axios) -- linked via CDN in the HTML file. Ensure you are connected to the internet to load these resources.
+**Note**: Some features may not work correctly when opening directly due to CORS policies. Using the development server is recommended.
 
-## 🧭 Features
+---
 
--- Real-time ISS Location: The map displays the current -- position of the International Space Station (ISS), updated -- every 5 minutes (510 seconds).
--- Refresh Button: A manual refresh button allows users to -- fetch the latest ISS location at any time.
--- Coordinates Display: Displays the current latitude and -- longitude of the ISS on the right side of the screen.
--- Loading Spinner: A loading spinner is displayed while -- fetching the ISS data from the API.
+## 🚀 Available Scripts
 
-## 🛠️ Functionality
+- **`npm start`** - Start HTTP server on port 8080
+- **`npm run dev`** - Start server and open in browser
+- **`npm run lint`** - Check code quality with ESLint
+- **`npm run format`** - Format code with Prettier
 
-API Integration
-The application retrieves the current location of the ISS using the Open Notify ISS API:
+---
 
-API Endpoint: http://api.open-notify.org/iss-now.json
-Data Format: JSON
-Key Data Fields:
-iss_position: Contains the latitude and longitude of the ISS.
-timestamp: The time at which the data was fetched.
-Map Integration
-Leaflet.js is used to render the map.
-The map is centered at [0, 0] (Equator), and the ISS position is updated every time new coordinates are fetched.
-Automatic Updates
-The ISS position is updated every 5 minutes (510 seconds) using the setInterval() method in JavaScript. This interval can be adjusted as necessary.
-Manual Refresh
-Users can manually update the ISS position by clicking the Refresh button. The refresh function makes a new API request and updates the map and the coordinates.
-Error Handling
-Basic error handling is in place to ensure smooth functioning if the API request fails, such as displaying an error message in the browser console.
+---
 
-## 📄 Files Explanation
+## 🔧 How It Works
 
-**index.html**:
+### Architecture Overview
 
-Contains the structure of the web page, including the map display, coordinates section, and the refresh button.
-Links to the necessary external resources (Leaflet.js, Axios).
-**style.css**:
+1. **Initialization**
+   - Map is initialized using Leaflet.js centered at [0, 0]
+   - ISS marker is placed with custom satellite icon
+   - Initial API call fetches current ISS position
 
-Contains the styling rules for the layout, such as:
-The map container width and height.
-Button and coordinate display styles.
-Basic page layout using Flexbox for positioning the map and controls.
-**script.js**:
+2. **Data Fetching**
+   - API Endpoint: `https://api.open-notify.org/iss-now.json` (secure HTTPS)
+   - Response Format: JSON with `iss_position` (latitude, longitude) and `timestamp`
+   - Timeout: 10 seconds to prevent hanging requests
+   - Error Handling: Specific error messages for different failure types
 
-Handles the logic for:
-Fetching the ISS location from the API.
-Updating the map marker and coordinates.
-Handling the refresh button click and automatic updates.
-Showing the loading spinner while fetching data.
+3. **Automatic Updates**
+   - Background refresh every 5 minutes using `setInterval()`
+   - Configurable interval via `CONFIG.UPDATE_INTERVAL`
+   - No user interaction required
 
-## 💡 How the Application Works
+4. **Manual Refresh**
+   - Refresh button with 1-second debouncing to prevent spam
+   - Immediate API call on button click
+   - Loading spinner provides visual feedback
 
--- **Initialization**: When the page loads, the map is -- initialized with the ISS's position at [0, 0].
--- **Location Update**: The updateISSLocation function is called immediately to fetch the ISS location and update the map.
--- **Automatic Updates**: The location is updated every 5 minutes using the setInterval() function.
--- **Manual Refresh: Users can click the Refresh button to fetch and display the ISS's current location manually.
--- **Coordinates Display**: The coordinates and a timestamp of the last update are displayed beside the map.
--- **Error Handling\*\*: If there is an issue with fetching the data, an error message is logged to the console.
+5. **Offline Detection**
+   - Monitors `navigator.onLine` status
+   - Listens for `online` and `offline` events
+   - Displays user-friendly notifications
 
-## ⚙️ Challenges and Solutions
+6. **Map Updates**
+   - Marker position updated to new coordinates
+   - Map view centered on ISS location
+   - Popup shows latitude and longitude (can be clicked)
 
-Issue with Map Not Updating: Initially, the map wasn't updating correctly due to incorrect API response handling. This was solved by ensuring that the latitude and longitude were extracted correctly from the API response and passed to the Leaflet map.
-Loading Spinner: Initially, the app lacked feedback during data fetches, which led to confusion. A simple loading spinner was added to show users that data was being fetched.
+---
+
+## 🎨 User Interface
+
+- **Map Container**: Interactive Leaflet map with OpenStreetMap tiles
+- **Coordinates Panel**: Displays current latitude, longitude, and last update time
+- **Refresh Button**: Manually triggers ISS location update
+- **Loading Spinner**: Animated indicator during API requests
+- **Error Messages**: Non-intrusive, auto-dismissing error notifications
+
+---
+
+## 🔒 Security Features
+
+- ✅ **HTTPS API Calls**: All requests use secure HTTPS protocol
+- ✅ **Request Timeouts**: 10-second timeout prevents hanging connections
+- ✅ **Input Validation**: Proper error handling for API responses
+- ✅ **No Sensitive Data**: No user data collected or stored
+- ✅ **CSP Ready**: Compatible with Content Security Policies
+
+---
+
+## ♿ Accessibility
+
+- **ARIA Labels**: All interactive elements have descriptive labels
+- **Semantic HTML**: Proper use of `<header>`, `<main>`, `<section>`, `<aside>`
+- **Live Regions**: Coordinates update with `aria-live="polite"`
+- **Keyboard Navigation**: Full keyboard support for all controls
+- **Screen Reader Friendly**: Descriptive text for assistive technologies
+
+---
+
+## 🧪 Code Quality
+
+- **ESLint**: Configured for modern JavaScript best practices
+- **Prettier**: Consistent code formatting across all files
+- **Constants**: Configuration values extracted to `CONFIG` object
+- **Error Handling**: Comprehensive try-catch blocks with specific messages
+- **Debouncing**: Prevents excessive API calls from rapid clicks
+- **Clean Code**: Well-commented, maintainable codebase
+
+---
+
+## 🚧 Known Limitations
+
+- ISS position updates every 5 minutes (API limitation)
+- Requires active internet connection for map tiles and ISS data
+- No historical ISS position data (current position only)
+- Limited to ISS tracking (no other satellites)
+
+---
+
+## 🔮 Future Enhancements
+
+Potential improvements for future versions:
+
+- [ ] Add ISS orbit path visualization
+- [ ] Display ISS pass predictions for user's location
+- [ ] Add more satellites to track
+- [ ] Implement PWA (Progressive Web App) features
+- [ ] Add dark mode toggle
+- [ ] Show ISS crew information
+- [ ] Add multi-language support
+- [ ] Include ISS altitude and speed data
+- [ ] Add unit tests and E2E tests
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+Please ensure your code:
+
+- Passes ESLint checks (`npm run lint`)
+- Is formatted with Prettier (`npm run format`)
+- Follows existing code style
+- Includes appropriate comments
+
+---
 
 ## 📝 License
 
-This project is open-source and available under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
 
 ## 📬 Contact
 
-For further questions or issues with the project, feel free to reach out to the project maintainer:
+**Nelson Chimdiadi C.**
 
-Email: sayhitonelson@gmail.com
-GitHub: github.com/Youngman-d-coder
+- Email: sayhitonelson@gmail.com
+- GitHub: [@Youngman-d-coder](https://github.com/Youngman-d-coder)
+
+---
+
+## 🙏 Acknowledgments
+
+- [Open Notify API](http://open-notify.org/) - ISS location data
+- [Leaflet.js](https://leafletjs.com/) - Interactive map library
+- [OpenStreetMap](https://www.openstreetmap.org/) - Map tiles and data
+- [Axios](https://axios-http.com/) - Promise-based HTTP client
+
+---
+
+## ⭐ Show Your Support
+
+If you find this project helpful, please consider giving it a star on GitHub!
+
+---
+
+**Last Updated**: February 2024  
+**Version**: 1.0.0

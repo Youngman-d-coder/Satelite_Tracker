@@ -30,7 +30,7 @@ const issMarker = L.marker([0, 0], { icon: satelliteIcon }).addTo(map);
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: CONFIG.MAX_ZOOM, // Maximum zoom level allowed
   attribution:
-    "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors", // Acknowledgement for the map data source
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', // Acknowledgement for the map data source
 }).addTo(map);
 
 // Helper function to format UNIX timestamps into a human-readable date and time
