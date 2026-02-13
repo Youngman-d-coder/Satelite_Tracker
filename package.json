@@ -1,15 +1,32 @@
 {
-  "name": "satelite-tracker",
+  "name": "satellite-tracker",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "A modern web application that displays the real-time location of the International Space Station (ISS) on an interactive world map",
+  "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx http-server -p 8080 -c-1",
+    "dev": "npx http-server -p 8080 -c-1 -o",
+    "lint": "npx eslint scripts/**/*.js",
+    "format": "npx prettier --write \"**/*.{js,html,css,json,md}\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "axios": "^1.7.7"
+  "keywords": [
+    "satellite",
+    "tracker",
+    "ISS",
+    "space",
+    "leaflet",
+    "map",
+    "real-time"
+  ],
+  "author": "Nelson Chimdiadi C. <sayhitonelson@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "http-server": "^14.1.1",
+    "prettier": "^3.2.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Youngman-d-coder/Satelite_Tracker.git"
   }
 }

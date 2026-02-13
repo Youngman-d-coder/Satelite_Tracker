@@ -4,7 +4,7 @@
 
 // Create a custom satellite icon for the map
 const satelliteIcon = L.icon({
-  iconUrl: "../assets/satellite_icon.png", // Path to the satellite icon image in the assets folder
+  iconUrl: "assets/satellite_icon.png", // Path to the satellite icon image in the assets folder
   iconSize: [40, 40], // Dimensions of the icon (width and height in pixels)
   iconAnchor: [16, 16], // Position of the icon's center relative to its top-left corner
   popupAnchor: [0, -16], // Offset for the popup that appears above the icon
@@ -50,7 +50,7 @@ async function updateISSLocation() {
   loadingSpinner.style.display = "block"; // Show the loading spinner while data is being fetched
   try {
     // Fetch the current ISS location and timestamp from the Open Notify API
-    const response = await axios.get("http://api.open-notify.org/iss-now.json");
+    const response = await axios.get("https://api.open-notify.org/iss-now.json");
     const { latitude, longitude } = response.data.iss_position; // Extract latitude and longitude
     const apiTimestamp = response.data.timestamp; // Extract the timestamp
 
