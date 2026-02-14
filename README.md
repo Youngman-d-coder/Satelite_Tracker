@@ -26,10 +26,10 @@ A modern, responsive web application that displays the **real-time location of t
 - **HTML5**: Semantic markup with accessibility features
 - **CSS3**: Modern, responsive styling with Flexbox, gradients, and animations
 - **JavaScript (ES6+)**: Async/await, modern syntax
-- **Leaflet.js v1.9.4**: Interactive map rendering with dark theme tiles
+- **Leaflet.js v1.9.4**: Interactive map rendering with Voyager theme tiles
 - **Axios**: HTTP client for API requests
 - **Where the ISS At API**: Reliable ISS location data provider
-- **CARTO Dark Theme**: Dark map tiles for enhanced visual experience
+- **CARTO Voyager Theme**: Colored map tiles with better visibility for enhanced visual experience
 - **ESLint & Prettier**: Code quality and formatting tools
 
 ---
@@ -128,7 +128,7 @@ start index.html
 ### Architecture Overview
 
 1. **Initialization**
-   - Map is initialized using Leaflet.js centered at [0, 0] with dark theme tiles
+   - Map is initialized using Leaflet.js centered at [0, 0] with Voyager theme tiles
    - ISS marker is placed with custom satellite icon
    - Initial API call fetches current ISS position
 
@@ -165,7 +165,7 @@ start index.html
 
 - **Dark Theme**: Navy/purple gradient background with animated star field
 - **Neon Effects**: Cyan glowing borders, text shadows, and button effects with pulsing animations
-- **Map Container**: Interactive Leaflet map with CARTO dark theme tiles and neon border glow
+- **Map Container**: Interactive Leaflet map with CARTO Voyager theme tiles and neon border glow
 - **Coordinates Panel**: Dark semi-transparent panel with cyan accents and hover effects
 - **Refresh Button**: Gradient cyan button with ripple effect and neon glow on hover
 - **Loading Spinner**: Animated spinner with neon cyan glow effect
@@ -267,7 +267,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [Where the ISS At API](https://wheretheiss.at/) - Reliable ISS location data
 - [Leaflet.js](https://leafletjs.com/) - Interactive map library
-- [CARTO](https://carto.com/) - Dark theme map tiles
+- [CARTO](https://carto.com/) - Voyager theme map tiles
 - [OpenStreetMap](https://www.openstreetmap.org/) - Map data
 - [Axios](https://axios-http.com/) - Promise-based HTTP client
 
