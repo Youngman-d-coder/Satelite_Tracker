@@ -4,7 +4,7 @@
 
 // Configuration constants
 const CONFIG = {
-  API_URL: "https://api.open-notify.org/iss-now.json",
+  API_URL: "https://api.wheretheiss.at/v1/satellites/25544",
   UPDATE_INTERVAL: 5 * 60 * 1000, // 5 minutes in milliseconds
   API_TIMEOUT: 10000, // 10 seconds timeout for API requests
   DEFAULT_ZOOM: 2,
@@ -26,11 +26,11 @@ const map = L.map("map").setView([0, 0], CONFIG.DEFAULT_ZOOM); // The map starts
 // Add a marker to represent the ISS's location on the map
 const issMarker = L.marker([0, 0], { icon: satelliteIcon }).addTo(map);
 
-// Add the base map layer (OpenStreetMap tiles) with proper attribution
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+// Add the base map layer (Dark theme map tiles) with proper attribution
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
   maxZoom: CONFIG.MAX_ZOOM, // Maximum zoom level allowed
   attribution:
-    "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors", // Acknowledgement for the map data source
+    "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>", // Acknowledgement for the map data source
 }).addTo(map);
 
 // Helper function to format UNIX timestamps into a human-readable date and time
@@ -73,9 +73,6 @@ function showNotification(message, type = "error") {
   notificationDiv.className = `notification-message ${type}`;
   notificationDiv.textContent = message;
 
-  const backgroundColor = type === "error" ? "#f44336" : "#4caf50";
-  notificationDiv.style.cssText = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background-color: ${backgroundColor}; color: white; padding: 15px 30px; border-radius: 5px; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.3);`;
-
   document.body.appendChild(notificationDiv);
 
   // Auto-remove notification after 5 seconds
@@ -88,26 +85,29 @@ function showNotification(message, type = "error") {
 async function updateISSLocation() {
   loadingSpinner.style.display = "block"; // Show the loading spinner while data is being fetched
   try {
-    // Fetch the current ISS location and timestamp from the Open Notify API with timeout
+    // Fetch the current ISS location and timestamp from the Where the ISS At API with timeout
     const response = await axios.get(CONFIG.API_URL, {
       timeout: CONFIG.API_TIMEOUT,
     });
-    const { latitude, longitude } = response.data.iss_position; // Extract latitude and longitude
-    const apiTimestamp = response.data.timestamp; // Extract the timestamp
+    const { latitude, longitude, timestamp } = response.data; // Extract latitude, longitude, and timestamp
+
+    // Parse and format coordinates once
+    const lat = parseFloat(latitude).toFixed(4);
+    const lng = parseFloat(longitude).toFixed(4);
 
     // Update the marker position on the map
     issMarker.setLatLng([latitude, longitude]);
-    issMarker.bindPopup(`Lat: ${latitude}, Lng: ${longitude}`);
+    issMarker.bindPopup(`Lat: ${lat}, Lng: ${lng}`);
 
     // Center the map view on the updated ISS location
     map.setView([latitude, longitude], CONFIG.DEFAULT_ZOOM);
 
     // Update the displayed latitude and longitude values on the webpage
-    document.getElementById("latitude").textContent = latitude;
-    document.getElementById("longitude").textContent = longitude;
+    document.getElementById("latitude").textContent = lat;
+    document.getElementById("longitude").textContent = lng;
 
     // Format the timestamp and update it on the webpage
-    const formattedTimestamp = formatTimestampFromAPI(apiTimestamp);
+    const formattedTimestamp = formatTimestampFromAPI(timestamp);
     document.getElementById("timestamp").textContent = formattedTimestamp;
   } catch (error) {
     console.error("Error fetching ISS location:", error); // Log the error for debugging purposes
