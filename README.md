@@ -10,6 +10,7 @@ A modern, responsive web application that displays the **real-time location of t
 
 - 🌍 **Real-time ISS Tracking**: Live location updates every 5 minutes
 - 🔄 **Manual Refresh**: On-demand location updates with debounced refresh button
+- 🛰️ **Follow ISS Toggle**: Turn map auto-follow on or off
 - 📡 **Offline Detection**: Automatic monitoring of network connectivity
 - ♿ **Accessible Design**: ARIA labels and semantic HTML for screen readers
 - 📱 **Responsive Layout**: Works seamlessly on desktop and mobile devices
@@ -25,12 +26,14 @@ A modern, responsive web application that displays the **real-time location of t
 
 - **HTML5**: Semantic markup with accessibility features
 - **CSS3**: Modern, responsive styling with Flexbox, gradients, and animations
-- **JavaScript (ES6+)**: Async/await, modern syntax
+- **JavaScript (ES Modules)**: Modular runtime components
 - **Leaflet.js v1.9.4**: Interactive map rendering with Voyager theme tiles
 - **Axios**: HTTP client for API requests
 - **Where the ISS At API**: Reliable ISS location data provider
 - **CARTO Voyager Theme**: Colored map tiles with better visibility for enhanced visual experience
 - **ESLint & Prettier**: Code quality and formatting tools
+- **Vitest**: Unit testing
+- **Playwright**: Browser smoke testing
 
 ---
 
@@ -44,7 +47,14 @@ satellite-tracker/
 ├── styles/
 │   └── style.css          # Responsive styles and layout
 ├── scripts/
-│   └── script.js          # JavaScript for map and API handling
+│   ├── main.js            # Application entrypoint
+│   ├── script.js          # Compatibility shim
+│   └── modules/           # Testable runtime modules
+├── tests/
+│   ├── unit/              # Vitest unit tests
+│   └── smoke/             # Playwright smoke tests
+├── .github/workflows/
+│   └── ci.yml             # Lint/test/dependency CI
 ├── .eslintrc.json         # ESLint configuration
 ├── .prettierrc.json       # Prettier configuration
 ├── .gitignore             # Git ignore rules
@@ -118,6 +128,10 @@ start index.html
 - **`npm run dev`** - Start server and open in browser
 - **`npm run lint`** - Check code quality with ESLint
 - **`npm run format`** - Format code with Prettier
+- **`npm run test:unit`** - Run unit tests
+- **`npm run test:smoke`** - Run browser smoke tests
+- **`npm run deps:check`** - Run production dependency audit
+- **`npm test`** - Run unit + smoke suites
 
 ---
 
@@ -156,7 +170,7 @@ start index.html
 
 6. **Map Updates**
    - Marker position updated to new coordinates
-   - Map view centered on ISS location
+   - Map view follows ISS only when Follow ISS is enabled
    - Popup shows latitude and longitude with 4 decimal precision
 
 ---
@@ -226,6 +240,7 @@ Potential improvements for future versions:
 - [ ] Add multi-language support
 - [ ] Include ISS altitude and speed data
 - [ ] Add unit tests and E2E tests
+- [x] Add unit and smoke tests baseline
 
 ---
 

@@ -54,11 +54,31 @@
             <strong>Last Updated:</strong>
             <span id="timestamp" aria-live="polite">-</span>
           </p>
+          <p>
+            <strong>Connection:</strong>
+            <span id="connection-state" aria-live="polite">Checking...</span>
+          </p>
+          <p>
+            <strong>Data Status:</strong>
+            <span id="data-status" aria-live="polite">Initializing...</span>
+          </p>
+          <p>
+            <strong>Data Age:</strong>
+            <span id="data-age" aria-live="polite">-</span>
+          </p>
         </div>
 
         <!-- Refresh Button for manual update -->
         <button id="refreshButton" aria-label="Manually refresh ISS location">
           Refresh ISS Location
+        </button>
+        <button
+          id="followToggle"
+          type="button"
+          aria-label="Toggle map following ISS position"
+          aria-pressed="true"
+        >
+          Follow ISS: On
         </button>
         <!-- Loading Spinner -->
         <div
@@ -73,6 +93,6 @@
     <!-- Axios Library for API Requests -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Link to JavaScript file -->
-    <script src="scripts/script.js"></script>
+    <script type="module" src="scripts/main.js"></script>
   </body>
 </html>

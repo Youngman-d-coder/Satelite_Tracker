@@ -6,8 +6,12 @@
   "scripts": {
     "start": "npx http-server -p 8080 -c-1",
     "dev": "npx http-server -p 8080 -c-1 -o",
-    "lint": "npx eslint scripts/**/*.js",
-    "format": "npx prettier --write \"**/*.{js,html,css,json,md}\""
+    "lint": "npx eslint scripts/**/*.js tests/**/*.js",
+    "format": "npx prettier --write \"**/*.{js,html,css,json,md}\"",
+    "test:unit": "vitest run",
+    "test:smoke": "playwright test",
+    "deps:check": "npm audit --omit=dev --audit-level=high",
+    "test": "npm run test:unit && npm run test:smoke"
   },
   "keywords": [
     "satellite",
@@ -21,9 +25,11 @@
   "author": "Nelson Chimdiadi C. <sayhitonelson@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@playwright/test": "^1.48.2",
     "eslint": "^8.57.0",
     "http-server": "^14.1.1",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "vitest": "^5.0.3"
   },
   "repository": {
     "type": "git",
