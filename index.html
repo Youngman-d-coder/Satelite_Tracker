@@ -72,6 +72,14 @@
         <button id="refreshButton" aria-label="Manually refresh ISS location">
           Refresh ISS Location
         </button>
+        <button
+          id="followToggle"
+          type="button"
+          aria-label="Toggle map following ISS position"
+          aria-pressed="true"
+        >
+          Follow ISS: On
+        </button>
         <!-- Loading Spinner -->
         <div
           id="loading-spinner"
@@ -85,6 +93,6 @@
     <!-- Axios Library for API Requests -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <!-- Link to JavaScript file -->
-    <script src="scripts/script.js"></script>
+    <script type="module" src="scripts/main.js"></script>
   </body>
 </html>

@@ -238,6 +238,36 @@ h1 {
   overflow: hidden;
 }
 
+#followToggle {
+  padding: 12px 30px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #2a2f4c 0%, #1a1f38 100%);
+  color: #bfefff;
+  border: 1px solid rgba(0, 255, 255, 0.35);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 0 12px rgba(0, 255, 255, 0.25),
+    0 2px 10px rgba(0, 170, 255, 0.15);
+}
+
+#followToggle[aria-pressed="true"] {
+  background: linear-gradient(135deg, #00ffff 0%, #00aaff 100%);
+  color: #0a0e27;
+  box-shadow:
+    0 0 18px rgba(0, 255, 255, 0.45),
+    0 3px 14px rgba(0, 170, 255, 0.3);
+}
+
+#followToggle:hover {
+  transform: translateY(-1px);
+}
+
 #refreshButton::before {
   content: "";
   position: absolute;

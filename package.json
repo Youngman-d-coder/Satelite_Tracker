@@ -6,8 +6,12 @@
   "scripts": {
     "start": "npx http-server -p 8080 -c-1",
     "dev": "npx http-server -p 8080 -c-1 -o",
-    "lint": "npx eslint scripts/**/*.js",
-    "format": "npx prettier --write \"**/*.{js,html,css,json,md}\""
+    "lint": "npx eslint scripts/**/*.js tests/**/*.js",
+    "format": "npx prettier --write \"**/*.{js,html,css,json,md}\"",
+    "test:unit": "vitest run",
+    "test:smoke": "playwright test",
+    "deps:check": "npm audit --omit=dev --audit-level=high",
+    "test": "npm run test:unit && npm run test:smoke"
   },
   "keywords": [
     "satellite",
@@ -23,7 +27,9 @@
   "devDependencies": {
     "eslint": "^8.57.0",
     "http-server": "^14.1.1",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "@playwright/test": "^1.48.2",
+    "vitest": "^2.1.3"
   },
   "repository": {
     "type": "git",

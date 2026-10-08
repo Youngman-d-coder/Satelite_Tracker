@@ -62,4 +62,15 @@ Branch: `copilot/orbitatlas-project-setup`
 
 - Architecture remains a static single-page implementation.
 - Scientific propagation and catalog modules are not yet introduced.
-- CI automation is not yet expanded beyond local lint tooling.
+- Dependency ranges are still caret-based in `package.json` and should be pinned in a later controlled dependency update.
+
+## Follow-up Status (Post-Audit Increment)
+
+- OA-001 ✅ Resolved with strict payload validation module and tests.
+- OA-002 ✅ Resolved with request sequencing manager and race-condition tests.
+- OA-003 ✅ Resolved with explicit Follow ISS control for recenter behavior.
+- OA-004 ✅ Resolved with persistent connection/data status/data-age indicators.
+- OA-005 ✅ Resolved with reduced-motion override.
+- OA-006 ✅ Resolved with centered marker anchoring.
+- OA-007 ✅ Resolved baseline by adding Vitest unit tests, Playwright smoke tests, and CI execution.
+- OA-008 ⚠️ Open: dependency version pinning remains pending.

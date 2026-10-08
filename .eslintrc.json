@@ -19,5 +19,21 @@
   "globals": {
     "L": "readonly",
     "axios": "readonly"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["tests/**/*.js", "playwright.config.js", "vitest.config.js"],
+      "env": {
+        "node": true,
+        "es2021": true
+      },
+      "globals": {
+        "describe": "readonly",
+        "it": "readonly",
+        "test": "readonly",
+        "expect": "readonly",
+        "beforeEach": "readonly"
+      }
+    }
+  ]
 }
