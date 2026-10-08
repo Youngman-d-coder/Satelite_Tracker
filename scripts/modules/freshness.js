@@ -1,5 +1,11 @@
-export function getObservationAgeMs(observationTimestampSec, nowMs = Date.now()) {
-  if (!Number.isFinite(observationTimestampSec) || observationTimestampSec <= 0) {
+export function getObservationAgeMs(
+  observationTimestampSec,
+  nowMs = Date.now()
+) {
+  if (
+    !Number.isFinite(observationTimestampSec) ||
+    observationTimestampSec <= 0
+  ) {
     return null;
   }
 

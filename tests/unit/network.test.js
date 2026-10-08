@@ -16,9 +16,9 @@ describe("classifyNetworkError", () => {
     expect(classifyNetworkError({ code: "ECONNABORTED" }, true).status).toBe(
       "timeout"
     );
-    expect(classifyNetworkError({ response: { status: 500 } }, true).status).toBe(
-      "api-error"
-    );
+    expect(
+      classifyNetworkError({ response: { status: 500 } }, true).status
+    ).toBe("api-error");
     expect(classifyNetworkError({ request: {} }, true).status).toBe(
       "network-error"
     );

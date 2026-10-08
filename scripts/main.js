@@ -1,6 +1,10 @@
 import { fetchISSObservation } from "./modules/api.js";
 import { CONFIG } from "./modules/config.js";
-import { formatAge, getObservationAgeMs, isStale } from "./modules/freshness.js";
+import {
+  formatAge,
+  getObservationAgeMs,
+  isStale,
+} from "./modules/freshness.js";
 import {
   createMapFollowState,
   markFirstFixApplied,
@@ -30,7 +34,7 @@ L.tileLayer(
   {
     maxZoom: CONFIG.maxZoom,
     attribution:
-      "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
   }
 ).addTo(map);
 
@@ -84,7 +88,10 @@ function updateConnectionState() {
 function updateFollowToggleUI() {
   const followLabel = mapFollowState.followEnabled ? "On" : "Off";
   dom.followToggle.textContent = `Follow ISS: ${followLabel}`;
-  dom.followToggle.setAttribute("aria-pressed", String(mapFollowState.followEnabled));
+  dom.followToggle.setAttribute(
+    "aria-pressed",
+    String(mapFollowState.followEnabled)
+  );
 }
 
 function updateDataAgeUI() {
@@ -108,7 +115,10 @@ function applyObservationToUI(observation) {
   issMarker.bindPopup(`Lat: ${latDisplay}, Lng: ${lngDisplay}`);
 
   if (shouldRecenterMap(mapFollowState)) {
-    map.setView([observation.latitude, observation.longitude], CONFIG.defaultZoom);
+    map.setView(
+      [observation.latitude, observation.longitude],
+      CONFIG.defaultZoom
+    );
   }
 
   mapFollowState = markFirstFixApplied(mapFollowState);
@@ -132,7 +142,8 @@ async function updateISSLocation() {
     const payload = await fetchISSObservation({
       apiUrl: CONFIG.apiUrl,
       timeoutMs: CONFIG.apiTimeoutMs,
-      requester: (apiUrl, requestConfig) => window.axios.get(apiUrl, requestConfig),
+      requester: (apiUrl, requestConfig) =>
+        window.axios.get(apiUrl, requestConfig),
     });
 
     const observation = parseAndValidateObservation(payload);
@@ -161,7 +172,10 @@ async function updateISSLocation() {
   }
 }
 
-const debouncedManualUpdate = debounce(updateISSLocation, CONFIG.debounceDelayMs);
+const debouncedManualUpdate = debounce(
+  updateISSLocation,
+  CONFIG.debounceDelayMs
+);
 
 dom.refreshButton.addEventListener("click", debouncedManualUpdate);
 dom.followToggle.addEventListener("click", () => {
@@ -175,7 +189,10 @@ window.addEventListener("online", () => {
   updateConnectionState();
 
   if (transition === "recovered") {
-    showNotification("Connection restored. Updating ISS location...", "success");
+    showNotification(
+      "Connection restored. Updating ISS location...",
+      "success"
+    );
   }
 
   updateISSLocation();
@@ -185,7 +202,10 @@ window.addEventListener("offline", () => {
   lastKnownOnlineState = false;
   updateConnectionState();
   setDataStatus("offline");
-  showNotification("You are offline. The map and data will not update.", "error");
+  showNotification(
+    "You are offline. The map and data will not update.",
+    "error"
+  );
 });
 
 updateConnectionState();
@@ -193,7 +213,10 @@ updateFollowToggleUI();
 
 if (!navigator.onLine) {
   setDataStatus("offline");
-  showNotification("You are offline. The map and data may not update.", "error");
+  showNotification(
+    "You are offline. The map and data may not update.",
+    "error"
+  );
 }
 
 setInterval(updateISSLocation, CONFIG.updateIntervalMs);
