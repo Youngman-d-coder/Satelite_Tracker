@@ -1,67 +1,149 @@
-// Satellite Tracker Application
-// Developed by Nelson, Chimdiadi C.
-// This script updates a map with the live location of the International Space Station (ISS) using the Open Notify API.
-
-// Configuration constants
 const CONFIG = {
   API_URL: "https://api.wheretheiss.at/v1/satellites/25544",
-  UPDATE_INTERVAL: 5 * 60 * 1000, // 5 minutes in milliseconds
-  API_TIMEOUT: 10000, // 10 seconds timeout for API requests
+  UPDATE_INTERVAL: 5 * 60 * 1000,
+  API_TIMEOUT: 10000,
   DEFAULT_ZOOM: 2,
   MAX_ZOOM: 18,
-  DEBOUNCE_DELAY: 1000, // 1 second debounce for manual refresh
+  DEBOUNCE_DELAY: 1000,
+  STALE_DATA_MS: 10 * 60 * 1000,
 };
 
-// Create a custom satellite icon for the map
 const satelliteIcon = L.icon({
-  iconUrl: "assets/satellite_icon.png", // Path to the satellite icon image in the assets folder
-  iconSize: [40, 40], // Dimensions of the icon (width and height in pixels)
-  iconAnchor: [16, 16], // Position of the icon's center relative to its top-left corner
-  popupAnchor: [0, -16], // Offset for the popup that appears above the icon
+  iconUrl: "assets/satellite_icon.png",
+  iconSize: [40, 40],
+  iconAnchor: [20, 20],
+  popupAnchor: [0, -18],
 });
 
-// Initialize the Leaflet map and set its initial view
-const map = L.map("map").setView([0, 0], CONFIG.DEFAULT_ZOOM); // The map starts centered at latitude 0, longitude 0, with a zoom level showing the whole world
-
-// Add a marker to represent the ISS's location on the map
+const map = L.map("map").setView([0, 0], CONFIG.DEFAULT_ZOOM);
 const issMarker = L.marker([0, 0], { icon: satelliteIcon }).addTo(map);
 
-// Add the base map layer (Voyager theme map tiles for better visibility) with proper attribution
 L.tileLayer(
   "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
   {
-    maxZoom: CONFIG.MAX_ZOOM, // Maximum zoom level allowed
+    maxZoom: CONFIG.MAX_ZOOM,
     attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>', // Acknowledgement for the map data source
+      "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>",
   }
 ).addTo(map);
 
-// Helper function to format UNIX timestamps into a human-readable date and time
-function formatTimestampFromAPI(apiTimestamp) {
-  const date = new Date(apiTimestamp * 1000); // Convert UNIX timestamp (seconds) to JavaScript's millisecond format
+const dom = {
+  latitude: document.getElementById("latitude"),
+  longitude: document.getElementById("longitude"),
+  timestamp: document.getElementById("timestamp"),
+  connectionState: document.getElementById("connection-state"),
+  dataStatus: document.getElementById("data-status"),
+  dataAge: document.getElementById("data-age"),
+  loadingSpinner: document.getElementById("loading-spinner"),
+  refreshButton: document.getElementById("refreshButton"),
+};
+
+const state = {
+  requestSequence: 0,
+  latestAppliedRequestSequence: 0,
+  isFirstFixApplied: false,
+  lastSuccessfulFetchMs: null,
+  lastObservationTimestampSec: null,
+  status: "initializing",
+};
+
+function formatTimestampFromAPI(apiTimestampSec) {
+  const date = new Date(apiTimestampSec * 1000);
   return date.toLocaleString("en-US", {
-    weekday: "short", // Show abbreviated weekday (e.g., Mon, Tue)
-    year: "numeric", // Display the full year (e.g., 2024)
-    month: "short", // Abbreviated month name (e.g., Jan, Feb)
-    day: "numeric", // Day of the month (e.g., 1, 15)
-    hour: "2-digit", // 2-digit hour in local time (e.g., 03, 12)
-    minute: "2-digit", // 2-digit minutes (e.g., 05, 59)
-    second: "2-digit", // 2-digit seconds (e.g., 00, 30)
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
   });
 }
 
-// Alert the user if their internet connection is offline on page load
-if (!navigator.onLine) {
-  showNotification(
-    "You are offline. The map and data may not update.",
-    "error"
-  );
+function formatAge(ageMs) {
+  if (!Number.isFinite(ageMs) || ageMs < 0) {
+    return "-";
+  }
+  const totalSeconds = Math.floor(ageMs / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (hours > 0) {
+    return `${hours}h ${minutes}m ${seconds}s`;
+  }
+  if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
+  }
+  return `${seconds}s`;
 }
 
-// Reference to the loading spinner element for indicating active data fetching
-const loadingSpinner = document.getElementById("loading-spinner");
+function showNotification(message, type = "error") {
+  const notificationDiv = document.createElement("div");
+  notificationDiv.className = `notification-message ${type}`;
+  notificationDiv.textContent = message;
+  document.body.appendChild(notificationDiv);
 
-// Debounce function to prevent rapid successive API calls
+  setTimeout(() => {
+    notificationDiv.remove();
+  }, 5000);
+}
+
+function parseFiniteNumber(value) {
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function parseAndValidateObservation(payload) {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const latitude = parseFiniteNumber(payload.latitude);
+  const longitude = parseFiniteNumber(payload.longitude);
+  const timestamp = parseFiniteNumber(payload.timestamp);
+
+  if (latitude === null || longitude === null || timestamp === null) {
+    return null;
+  }
+  if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+    return null;
+  }
+  if (timestamp <= 0) {
+    return null;
+  }
+
+  return { latitude, longitude, timestamp };
+}
+
+function setDataStatus(statusText) {
+  state.status = statusText;
+  dom.dataStatus.textContent = statusText;
+}
+
+function updateConnectionState() {
+  dom.connectionState.textContent = navigator.onLine ? "Online" : "Offline";
+}
+
+function updateDataAgeUI() {
+  if (!state.lastObservationTimestampSec) {
+    dom.dataAge.textContent = "-";
+    return;
+  }
+
+  const observationAgeMs =
+    Date.now() - state.lastObservationTimestampSec * 1000;
+  dom.dataAge.textContent = formatAge(observationAgeMs);
+
+  if (
+    state.status !== "loading" &&
+    state.status !== "offline" &&
+    observationAgeMs > CONFIG.STALE_DATA_MS
+  ) {
+    setDataStatus("stale");
+  }
+}
+
 let debounceTimer;
 function debounce(func, delay) {
   return function (...args) {
@@ -70,102 +152,130 @@ function debounce(func, delay) {
   };
 }
 
-// Function to display user-friendly notifications
-function showNotification(message, type = "error") {
-  const notificationDiv = document.createElement("div");
-  notificationDiv.className = `notification-message ${type}`;
-  notificationDiv.textContent = message;
+function applyObservationToUI(observation, options = {}) {
+  const { recenter = false } = options;
 
-  document.body.appendChild(notificationDiv);
+  const latDisplay = observation.latitude.toFixed(4);
+  const lngDisplay = observation.longitude.toFixed(4);
 
-  // Auto-remove notification after 5 seconds
-  setTimeout(() => {
-    notificationDiv.remove();
-  }, 5000);
+  issMarker.setLatLng([observation.latitude, observation.longitude]);
+  issMarker.bindPopup(`Lat: ${latDisplay}, Lng: ${lngDisplay}`);
+
+  if (recenter || !state.isFirstFixApplied) {
+    map.setView(
+      [observation.latitude, observation.longitude],
+      CONFIG.DEFAULT_ZOOM
+    );
+  }
+
+  dom.latitude.textContent = latDisplay;
+  dom.longitude.textContent = lngDisplay;
+  dom.timestamp.textContent = formatTimestampFromAPI(observation.timestamp);
+
+  state.lastSuccessfulFetchMs = Date.now();
+  state.lastObservationTimestampSec = observation.timestamp;
+  state.isFirstFixApplied = true;
+  setDataStatus("synced");
+  updateDataAgeUI();
 }
 
-// Function to fetch and update the ISS's location on the map
-async function updateISSLocation() {
-  loadingSpinner.style.display = "block"; // Show the loading spinner while data is being fetched
+async function updateISSLocation(options = {}) {
+  const { recenter = false } = options;
+  const requestSequence = ++state.requestSequence;
+  dom.loadingSpinner.style.display = "block";
+  setDataStatus("loading");
+  updateConnectionState();
+
   try {
-    // Fetch the current ISS location and timestamp from the Where the ISS At API with timeout
     const response = await axios.get(CONFIG.API_URL, {
       timeout: CONFIG.API_TIMEOUT,
     });
-    const { latitude, longitude, timestamp } = response.data; // Extract latitude, longitude, and timestamp
+    const observation = parseAndValidateObservation(response.data);
 
-    // Parse and format coordinates once
-    const lat = parseFloat(latitude).toFixed(4);
-    const lng = parseFloat(longitude).toFixed(4);
-
-    // Update the marker position on the map
-    issMarker.setLatLng([latitude, longitude]);
-    issMarker.bindPopup(`Lat: ${lat}, Lng: ${lng}`);
-
-    // Center the map view on the updated ISS location
-    map.setView([latitude, longitude], CONFIG.DEFAULT_ZOOM);
-
-    // Update the displayed latitude and longitude values on the webpage
-    document.getElementById("latitude").textContent = lat;
-    document.getElementById("longitude").textContent = lng;
-
-    // Format the timestamp and update it on the webpage
-    const formattedTimestamp = formatTimestampFromAPI(timestamp);
-    document.getElementById("timestamp").textContent = formattedTimestamp;
-  } catch (error) {
-    console.error("Error fetching ISS location:", error); // Log the error for debugging purposes
-
-    // Provide specific error messages based on error type
-    if (error.code === "ECONNABORTED") {
+    if (!observation) {
+      setDataStatus("invalid-data");
       showNotification(
-        "Request timed out. Please check your internet connection.",
+        "Received invalid satellite coordinates or timestamp from the provider.",
+        "error"
+      );
+      return;
+    }
+
+    if (requestSequence < state.latestAppliedRequestSequence) {
+      return;
+    }
+
+    state.latestAppliedRequestSequence = requestSequence;
+    applyObservationToUI(observation, { recenter });
+  } catch (error) {
+    console.error("Error fetching ISS location:", error);
+
+    if (!navigator.onLine) {
+      setDataStatus("offline");
+      showNotification("You are offline. Data updates are paused.", "error");
+    } else if (error.code === "ECONNABORTED") {
+      setDataStatus("timeout");
+      showNotification(
+        "Request timed out. Please check your connection.",
         "error"
       );
     } else if (error.response) {
+      setDataStatus("api-error");
       showNotification(
         `API Error: ${error.response.status}. Please try again later.`,
         "error"
       );
     } else if (error.request) {
+      setDataStatus("network-error");
       showNotification(
         "No response from server. Please check your connection.",
         "error"
       );
     } else {
+      setDataStatus("error");
       showNotification(
         "Failed to fetch ISS location. Please try again later.",
         "error"
       );
     }
   } finally {
-    loadingSpinner.style.display = "none"; // Hide the loading spinner once data fetching is complete
+    dom.loadingSpinner.style.display = "none";
   }
 }
 
-// Reference to the refresh button on the webpage
-const refreshButton = document.getElementById("refreshButton");
+const debouncedUpdate = debounce(() => {
+  updateISSLocation({ recenter: true });
+}, CONFIG.DEBOUNCE_DELAY);
 
-// Attach a click event listener to the refresh button with debouncing
-const debouncedUpdate = debounce(updateISSLocation, CONFIG.DEBOUNCE_DELAY);
-refreshButton.addEventListener("click", () => {
-  debouncedUpdate(); // Fetch and display the updated ISS location with debouncing
-});
+dom.refreshButton.addEventListener("click", debouncedUpdate);
 
-// Monitor online/offline status changes
 window.addEventListener("online", () => {
+  updateConnectionState();
   showNotification("Connection restored. Updating ISS location...", "success");
-  updateISSLocation();
+  updateISSLocation({ recenter: false });
 });
 
 window.addEventListener("offline", () => {
+  updateConnectionState();
+  setDataStatus("offline");
   showNotification(
     "You are offline. The map and data will not update.",
     "error"
   );
 });
 
-// Set up an interval to automatically refresh the ISS location
-setInterval(updateISSLocation, CONFIG.UPDATE_INTERVAL);
+updateConnectionState();
+if (!navigator.onLine) {
+  setDataStatus("offline");
+  showNotification(
+    "You are offline. The map and data may not update.",
+    "error"
+  );
+}
 
-// Fetch and display the ISS location immediately upon page load
-updateISSLocation();
+setInterval(() => {
+  updateISSLocation({ recenter: false });
+}, CONFIG.UPDATE_INTERVAL);
+
+setInterval(updateDataAgeUI, 1000);
+updateISSLocation({ recenter: true });

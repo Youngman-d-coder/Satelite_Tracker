@@ -211,6 +211,13 @@ h1 {
   font-weight: 600;
 }
 
+#connection-state,
+#data-status,
+#data-age {
+  display: inline-block;
+  margin-left: 6px;
+}
+
 #refreshButton {
   padding: 12px 30px;
   margin-top: 20px;
@@ -348,5 +355,20 @@ h1 {
 
   #map {
     height: 400px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  body::before {
+    animation: none !important;
   }
 }
